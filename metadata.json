@@ -1,0 +1,6 @@
+{
+  "name": "CampHub Thailand",
+  "description": "แอปคู่คิดสายแค้มป์ปิ้ง ดีไซน์โทนป่าธรรมชาติ Forest Earthy พร้อมระบบแผนที่และค้นหาจุดกางเต็นท์ยอดนิยม",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

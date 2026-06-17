@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Prompt", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  --color-forest-950: #0d1e15;
+  --color-forest-900: #143022;
+  --color-forest-800: #1a412c;
+  --color-forest-700: #255c3f;
+  --color-forest-600: #337a54;
+  --color-forest-500: #449c6d;
+  --color-forest-400: #5db786;
+  --color-forest-300: #85ceaa;
+  --color-forest-200: #b4e7cd;
+  --color-forest-100: #d6f2e3;
+  --color-forest-50: #f2faf5;
+
+  --color-earth-950: #2a1910;
+  --color-earth-900: #3a2316;
+  --color-earth-800: #4e301e;
+  --color-earth-700: #653f28;
+  --color-earth-600: #805134;
+  --color-earth-500: #9e6744;
+  --color-earth-400: #be825c;
+  --color-earth-300: #dbaf96;
+  --color-earth-200: #f0d8c9;
+  --color-earth-100: #f8ebe3;
+  --color-earth-50: #fcf6f3;
+
+  --color-moss-500: #7c906a;
+  --color-moss-600: #627552;
+  --color-moss-100: #e2e8dd;
+
+  --color-sand-800: #b39f82;
+  --color-sand-600: #cca578;
+  --color-sand-200: #eae1da;
+  --color-sand-100: #f5eedf;
+  --color-sand-50: #faf7f2;
+}
+
+body {
+  background-color: #faf7f2; /* sand-50 */
+  color: #0d1e15; /* forest-950 */
+  font-family: "Inter", "Prompt", var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars for Earthy aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #faf7f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #cca578;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b39f82;
+}
