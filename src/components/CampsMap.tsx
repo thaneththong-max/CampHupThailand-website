@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
-import { Tent, Star, MapPin, X, Info, AlertTriangle, ChevronRight, Navigation, Zap, Check } from 'lucide-react';
+import { Tent, Star, MapPin, X, Info, AlertTriangle, ChevronRight, Navigation, Zap, Check, Sparkles } from 'lucide-react';
 import { CampSite } from '../types';
 
 export interface EvStation {
@@ -75,6 +75,344 @@ const generateMockEvStations = (lat: number, lng: number): EvStation[] => {
   ];
 };
 
+const NATIONWIDE_EV_STATIONS: EvStation[] = [
+  // --- กรุงเทพฯ และปริมณฑล ---
+  {
+    id: 'th-ev-ptt-vibhavadi',
+    name: 'EV Station PluZ PTT - วิภาวดีรังสิต (กรุงเทพฯ)',
+    address: 'สถานีบริการน้ำมัน PTT Station ถ.วิภาวดีรังสิต แขวงสามเสนใน เขตพญาไท',
+    latitude: 13.7844,
+    longitude: 100.5611,
+    rating: 4.8,
+    provider: 'PTT'
+  },
+  {
+    id: 'th-ev-pea-headquarters',
+    name: 'PEA VOLTA - สำนักงานใหญ่การไฟฟ้าส่วนภูมิภาค (กรุงเทพฯ)',
+    address: 'ถ.งามวงศ์วาน แขวงลาดยาว เขตจตุจักร กรุงเทพมหานคร',
+    latitude: 13.8471,
+    longitude: 100.5552,
+    rating: 4.7,
+    provider: 'PEA'
+  },
+  {
+    id: 'th-ev-ea-paragon',
+    name: 'EA Anywhere - สยามพารากอน ชั้น B1',
+    address: 'ศูนย์การค้าสยามพารากอน ถ.พระรามที่ 1 เขตปทุมวัน กรุงเทพมหานคร',
+    latitude: 13.7461,
+    longitude: 100.5348,
+    rating: 4.6,
+    provider: 'EA'
+  },
+  {
+    id: 'th-ev-evolt-centralworld',
+    name: 'EVolt - เซ็นทรัลเวิลด์ อาคารจอดรถชั้น 2',
+    address: 'ถ.ราชดำริ แขวงปทุมวัน เขตปทุมวัน กรุงเทพมหานคร',
+    latitude: 13.7469,
+    longitude: 100.5393,
+    rating: 4.5,
+    provider: 'EVolt'
+  },
+  {
+    id: 'th-ev-egat-headquarters',
+    name: 'EleX by EGAT - สำนักงานกลาง กฟผ. บางกรวย',
+    address: 'ถ.จรัญสนิทวงศ์ ต.บางกรวย อ.บางกรวย นนทบุรี',
+    latitude: 13.8052,
+    longitude: 100.4912,
+    rating: 4.9,
+    provider: 'EGAT'
+  },
+  {
+    id: 'th-ev-sharge-chidlom',
+    name: 'SHARGE - ห้างสรรพสินค้าเซ็นทรัลชิดลม',
+    address: 'ถ.เพลินจิต แขวงลุมพินี เขตปทุมวัน กรุงเทพมหานคร',
+    latitude: 13.7445,
+    longitude: 100.5444,
+    rating: 4.4,
+    provider: 'SHARGE'
+  },
+  {
+    id: 'th-ev-tesla-iconsiam',
+    name: 'Tesla Supercharger - ไอคอนสยาม ชั้น B1',
+    address: 'ถ.เจริญนคร แขวงคลองต้นไทร เขตคลองสาน กรุงเทพมหานคร',
+    latitude: 13.7268,
+    longitude: 100.5111,
+    rating: 4.9,
+    provider: 'Tesla'
+  },
+  {
+    id: 'th-ev-altervim-rama4',
+    name: 'AlterVim - โลตัส พระราม 4',
+    address: 'ถ.พระรามที่ 4 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร',
+    latitude: 13.7198,
+    longitude: 100.5668,
+    rating: 4.5,
+    provider: 'AlterVim'
+  },
+
+  // --- ภาคเหนือ (ทางสู่ป่า ภูเขา ดอย และทางท่องเที่ยว) ---
+  {
+    id: 'th-ev-pea-doisaket',
+    name: 'PEA VOLTA - ดอยสะเก็ด (เชียงใหม่)',
+    address: 'ต.เชิงดอย อ.ดอยสะเก็ด เชียงใหม่ (พิกัดปักหมุดยอดนิยมขึ้นฮอดและพายพาย)',
+    latitude: 18.8712,
+    longitude: 99.1354,
+    rating: 4.7,
+    provider: 'PEA'
+  },
+  {
+    id: 'th-ev-ptt-hangdong',
+    name: 'EV Station PluZ PTT - หางดง (เชียงใหม่)',
+    address: 'PTT Station ถ.เชียงใหม่-ฮอด ต.หางดง อ.หางดง เชียงใหม่',
+    latitude: 18.7302,
+    longitude: 98.9482,
+    rating: 4.6,
+    provider: 'PTT'
+  },
+  {
+    id: 'th-ev-egat-bhumibol',
+    name: 'EleX by EGAT - เขื่อนภูมิพล (ตาก)',
+    address: 'บริเวณลานจอดรถส่วนหน้าเขื่อนภูมิพล อ.สามเงา ตาก (ใกล้จุดกางเต็นท์เขื่อน)',
+    latitude: 17.2422,
+    longitude: 98.9712,
+    rating: 4.9,
+    provider: 'EGAT'
+  },
+  {
+    id: 'th-ev-evolt-chiangrai',
+    name: 'EVolt - เซ็นทรัล เชียงราย ชั้น G',
+    address: 'ถ.พหลโยธิน ต.รอบเวียง อ.เมืองเชียงราย เชียงราย',
+    latitude: 19.8974,
+    longitude: 99.8322,
+    rating: 4.6,
+    provider: 'EVolt'
+  },
+  {
+    id: 'th-ev-ea-nakonsawan',
+    name: 'EA Anywhere - ตลาดศรีนคร นครสวรรค์',
+    address: 'ถ.พหลโยธิน ต.ปากน้ำโพ อ.เมืองนครสวรรค์ นครสวรรค์',
+    latitude: 15.7112,
+    longitude: 100.1254,
+    rating: 4.4,
+    provider: 'EA'
+  },
+  {
+    id: 'th-ev-sharge-phitsanulok',
+    name: 'REVER SHARGE - ปั๊มเชลล์ พิษณุโลก',
+    address: 'ถ.เลี่ยงเมืองพิษณุโลก ต.สมอแข อ.เมืองพิษณุโลก พิษณุโลก',
+    latitude: 16.8222,
+    longitude: 100.2654,
+    rating: 4.5,
+    provider: 'SHARGE'
+  },
+
+  // --- ภาคตะวันออกเฉียงเหนือ (Isan) ---
+  {
+    id: 'th-ev-ptt-pakchong',
+    name: 'EV Station PluZ PTT - มิตรภาพปากช่อง (นครราชสีมา)',
+    address: 'PTT Station ถ.มิตรภาพ ต.ปากช่อง อ.ปากช่อง นครราชสีมา (ปากทางขึ้นด่านเขาใหญ่)',
+    latitude: 14.6982,
+    longitude: 101.4112,
+    rating: 4.8,
+    provider: 'PTT'
+  },
+  {
+    id: 'th-ev-pea-prasat',
+    name: 'PEA VOLTA - ปราสาท (สุรินทร์)',
+    address: 'หน้าเทสโก้ โลตัส สาขาปราสาท ถ.โชคชัย-เดชอุดม ต.กังแอน อ.ปราสาท สุรินทร์',
+    latitude: 14.6222,
+    longitude: 103.4124,
+    rating: 4.6,
+    provider: 'PEA'
+  },
+  {
+    id: 'th-ev-egat-lamtakhong',
+    name: 'EleX by EGAT - ศูนย์ทดสอบโรงไฟฟ้าลำตะคองลำตะคอง',
+    address: 'โรงไฟฟ้าลำตะคองชลภาวัฒนา ต.คลองไผ่ อ.สีคิ้ว นครราชสีมา',
+    latitude: 14.8622,
+    longitude: 101.5224,
+    rating: 4.9,
+    provider: 'EGAT'
+  },
+  {
+    id: 'th-ev-ea-khonkaen',
+    name: 'EA Anywhere - เซ็นทรัล ขอนแก่น',
+    address: 'ถ.ศรีจันทร์ ต.ในเมือง อ.เมืองขอนแก่น ขอนแก่น',
+    latitude: 16.4322,
+    longitude: 102.8254,
+    rating: 4.7,
+    provider: 'EA'
+  },
+  {
+    id: 'th-ev-evolt-udon',
+    name: 'EVolt - เซ็นทรัล อุดรธานี ชั้นใต้ดิน',
+    address: 'ถ.ประจักษ์ศิลปาคม ต.หมากแข้ง อ.เมืองอุดรธานี อุดรธานี',
+    latitude: 17.4084,
+    longitude: 102.7952,
+    rating: 4.5,
+    provider: 'EVolt'
+  },
+  {
+    id: 'th-ev-altervim-buriram',
+    name: 'AlterVim - บิ๊กซี บุรีรัมย์',
+    address: 'ถ.เลี่ยงเมืองบุรีรัมย์ ต.อิสาณ อ.เมืองบุรีรัมย์ บุรีรัมย์',
+    latitude: 15.0022,
+    longitude: 103.1112,
+    rating: 4.6,
+    provider: 'AlterVim'
+  },
+
+  // --- ภาคตะวันตก (กาญจนบุรี แหล่งแคมป์ปิ้งยอดฮิต) ---
+  {
+    id: 'th-ev-pea-saiyok',
+    name: 'PEA VOLTA - ไทรโยค (กาญจนบุรี)',
+    address: 'บริเวณหน้าสหกรณ์การเกษตรไทรโยค ต.ลุ่มสุ่ม อ.ไทรโยค กาญจนบุรี (ใกล้อุทยานไทรโยค)',
+    latitude: 14.1222,
+    longitude: 99.1354,
+    rating: 4.7,
+    provider: 'PEA'
+  },
+  {
+    id: 'th-ev-ptt-kanchanaburi',
+    name: 'EV Station PluZ PTT - เลี่ยงเมืองกาญจนบุรี',
+    address: 'PTT Station ถ.เลี่ยงเมืองกาญจนบุรี ต.ปากแพรก อ.เมืองกาญจนบุรี กาญจนบุรี',
+    latitude: 14.0322,
+    longitude: 99.5254,
+    rating: 4.6,
+    provider: 'PTT'
+  },
+  {
+    id: 'th-ev-egat-srinagarind',
+    name: 'EleX by EGAT - เขื่อนศรีนครินทร์ (กาญจนบุรี)',
+    address: 'ลานจอดรถส่วนในติดศูนย์ลานกางเต็นท์เขื่อนศรีนครินทร์ ต.ท่ากระดาน อ.ศรีสวัสดิ์ กาญจนบุรี',
+    latitude: 14.4022,
+    longitude: 99.1124,
+    rating: 4.9,
+    provider: 'EGAT'
+  },
+  {
+    id: 'th-ev-ea-phetchaburi',
+    name: 'EA Anywhere - เพชรบุรี เขาวัง',
+    address: 'ถ.คีรีรัฐยา ต.คลองกระแชง อ.เมืองเพชรบุรี เพชรบุรี',
+    latitude: 13.1112,
+    longitude: 99.9454,
+    rating: 4.5,
+    provider: 'EA'
+  },
+
+  // --- ภาคตะวันออก ---
+  {
+    id: 'th-ev-ptt-saensuk',
+    name: 'EV Station PluZ PTT - สาขาแสนสุข บางแสน (ชลบุรี)',
+    address: 'ถ.ลงหาดบางแสน ต.แสนสุข อ.เมืองชลบุรี ชลบุรี',
+    latitude: 13.2922,
+    longitude: 100.9254,
+    rating: 4.7,
+    provider: 'PTT'
+  },
+  {
+    id: 'th-ev-pea-sriracha',
+    name: 'PEA VOLTA - สหพัฒน์ศรีราชา (ชลบุรี)',
+    address: 'นิคมอุตสาหกรรมปิ่นทอง ถ.เก้ากิโล ต.สุรศักดิ์ อ.ศรีราชา ชลบุรี',
+    latitude: 13.0822,
+    longitude: 100.9654,
+    rating: 4.5,
+    provider: 'PEA'
+  },
+  {
+    id: 'th-ev-ptt-klaeng',
+    name: 'EV Station PluZ PTT - เลี่ยงเมืองแกลง (ระยอง)',
+    address: 'PTT Station ถ.สุขุมวิท ต.ทางเกวียน อ.แกลง ระยอง',
+    latitude: 12.7822,
+    longitude: 101.6542,
+    rating: 4.7,
+    provider: 'PTT'
+  },
+  {
+    id: 'th-ev-sharge-pattaya',
+    name: 'SHARGE - พัทยา อเวนิว แฟลชชาร์จ',
+    address: 'ศูนย์การค้าพัทยา อเวนิว ถ.พัทยาสายสอง เมืองพัทยา ชลบุรี',
+    latitude: 12.9284,
+    longitude: 100.8842,
+    rating: 4.4,
+    provider: 'SHARGE'
+  },
+  {
+    id: 'th-ev-evolt-nongnooch',
+    name: 'EVolt - สวนนงนุช พัทยา',
+    address: 'ต.นาจอมเทียน อ.สัตหีบ ชลบุรี (จุดจอดรถหน้าทางท่องเที่ยวหลัก)',
+    latitude: 12.7662,
+    longitude: 100.9324,
+    rating: 4.8,
+    provider: 'EVolt'
+  },
+
+  // --- ภาคใต้ ---
+  {
+    id: 'th-ev-pea-chumphon',
+    name: 'PEA VOLTA - ชุมพร สี่แยกปฐมพร',
+    address: 'ถ.เพชรเกษม ต.วังไผ่ อ.เมืองชุมพร ชุมพร (ประตูผ่านทางลงเกาะใต้ฝั่งทะเล)',
+    latitude: 10.4522,
+    longitude: 99.1242,
+    rating: 4.6,
+    provider: 'PEA'
+  },
+  {
+    id: 'th-ev-ptt-phunphin',
+    name: 'EV Station PluZ PTT - พุนพิน (สุราษฎร์ธานี)',
+    address: 'PTT Station ถ.สายทอง ต.ท่าสะท้อน อ.พุนพิน สุราษฎร์ธานี',
+    latitude: 9.1154,
+    longitude: 99.2342,
+    rating: 4.7,
+    provider: 'PTT'
+  },
+  {
+    id: 'th-ev-egat-ratchaprapha',
+    name: 'EleX by EGAT - เขื่อนรัชชประภา (สุราษฎร์ธานี)',
+    address: 'ลานจอดรถท่าเรือเขื่อนรัชชประภา ต.เขาพัง อ.บ้านตาขุน สุราษฎร์ธานี',
+    latitude: 8.9712,
+    longitude: 98.8154,
+    rating: 4.9,
+    provider: 'EGAT'
+  },
+  {
+    id: 'th-ev-ea-huahin',
+    name: 'EA Anywhere - บลูพอร์ต หัวหิน ชั้นใต้ดิน',
+    address: 'ถ.เพชรเกษม ต.หนองแก อ.หัวหิน ประจวบคีรีขันธ์',
+    latitude: 12.5512,
+    longitude: 99.9612,
+    rating: 4.6,
+    provider: 'EA'
+  },
+  {
+    id: 'th-ev-evolt-phuket',
+    name: 'EVolt - เซ็นทรัล ภูเก็ต ฟลอเรสต้า',
+    address: 'ถ.วิชิตสงคราม ต.ตลาดใหญ่ อ.เมืองภูเก็ต ภูเก็ต',
+    latitude: 7.8922,
+    longitude: 98.3654,
+    rating: 4.7,
+    provider: 'EVolt'
+  },
+  {
+    id: 'th-ev-sharge-hatyai',
+    name: 'SHARGE - เซ็นทรัล หาดใหญ่ เลนชาร์จพิเศษ',
+    address: 'ถ.กาญจนวานิช ต.คอหงส์ อ.หาดใหญ่ สงขลา',
+    latitude: 6.9922,
+    longitude: 100.4854,
+    rating: 4.8,
+    provider: 'SHARGE'
+  },
+  {
+    id: 'th-ev-tesla-phuket',
+    name: 'Tesla Supercharger - บลูทรี ภูเก็ต',
+    address: 'ต.เชิงทะเล อ.ถลาง ภูเก็ต',
+    latitude: 7.9818,
+    longitude: 98.3152,
+    rating: 4.9,
+    provider: 'Tesla'
+  }
+];
+
 const API_KEY =
   process.env.GOOGLE_MAPS_PLATFORM_KEY ||
   (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
@@ -135,6 +473,7 @@ interface CampsMapProps {
   selectedCamp: CampSite | null;
   onSelectCamp: (camp: CampSite) => void;
   onCloseCampDetails?: () => void;
+  onAnalyzeWithAi?: (camp: CampSite) => void;
 }
 
 // Inner helper component to auto-pan the map when selection changes
@@ -188,23 +527,27 @@ function EvChargingHandler({
 
   const fallbackToMock = (lat: number, lng: number, name: string) => {
     const mocks = generateMockEvStations(lat, lng);
-    setEvStations(mocks);
+    const combined = [...NATIONWIDE_EV_STATIONS];
+    mocks.forEach(m => {
+      if (!combined.some(c => c.id === m.id)) {
+        combined.push(m);
+      }
+    });
+    setEvStations(combined);
     setEvSearchCenterName(name);
   };
 
   const handleSearchEVStations = () => {
-    let targetLat = 14.4378;
-    let targetLng = 101.4011;
-    let targetName = 'อุทยานแห่งชาติเขาใหญ่';
+    let targetLat = 13.7367;
+    let targetLng = 100.5231;
+    let targetZoom = 6;
+    let targetName = 'ทั่วประเทศไทย (ทุกค่ายทุกยี่ห้อ)';
 
     if (selectedCamp) {
       targetLat = selectedCamp.latitude;
       targetLng = selectedCamp.longitude;
+      targetZoom = 11;
       targetName = selectedCamp.name;
-    } else if (camps.length > 0) {
-      targetLat = camps[0].latitude;
-      targetLng = camps[0].longitude;
-      targetName = camps[0].name;
     }
 
     setIsLoadingEV(true);
@@ -219,7 +562,7 @@ function EvChargingHandler({
         setIsLoadingEV(false);
         if (map) {
           map.panTo({ lat: targetLat, lng: targetLng });
-          map.setZoom(11);
+          map.setZoom(targetZoom);
         }
       }, 600);
       return;
@@ -229,8 +572,8 @@ function EvChargingHandler({
       const service = new placesLib.PlacesService(map);
       const request: google.maps.places.TextSearchRequest = {
         location: new google.maps.LatLng(targetLat, targetLng),
-        radius: 30000, // 30 km
-        query: 'EV Charging Station สถานีชาร์จรถไฟฟ้า ' + targetName
+        radius: selectedCamp ? 30000 : 100000, // wider radius if looking generally
+        query: 'EV Charging Station สถานีชาร์จรถไฟฟ้า ' + (selectedCamp ? targetName : '')
       };
 
       service.textSearch(request, (results, status) => {
@@ -245,15 +588,23 @@ function EvChargingHandler({
             rating: place.rating,
             provider: detectProvider(place.name || '')
           }));
-          setEvStations(foundStations);
+          
+          const combined = [...NATIONWIDE_EV_STATIONS];
+          foundStations.forEach(s => {
+            if (!combined.some(c => c.id === s.id)) {
+              combined.push(s);
+            }
+          });
+          
+          setEvStations(combined);
           setEvSearchCenterName(targetName);
 
           map.panTo({ lat: targetLat, lng: targetLng });
-          map.setZoom(11);
+          map.setZoom(targetZoom);
         } else {
           fallbackToMock(targetLat, targetLng, targetName);
           map.panTo({ lat: targetLat, lng: targetLng });
-          map.setZoom(11);
+          map.setZoom(targetZoom);
         }
       });
     } catch (e) {
@@ -276,7 +627,8 @@ export default function CampsMap({
   camps,
   selectedCamp,
   onSelectCamp,
-  onCloseCampDetails
+  onCloseCampDetails,
+  onAnalyzeWithAi
 }: CampsMapProps) {
   const [activeOverlayCamp, setActiveOverlayCamp] = useState<CampSite | null>(null);
 
@@ -286,6 +638,12 @@ export default function CampsMap({
   const [isLoadingEV, setIsLoadingEV] = useState<boolean>(false);
   const [evSearchCenterName, setEvSearchCenterName] = useState<string>('');
   const [searchTrigger, setSearchTrigger] = useState<number>(0);
+  const [selectedEvProvider, setSelectedEvProvider] = useState<string>('ALL');
+
+  const filteredEvStations = evStations.filter(station => {
+    if (selectedEvProvider === 'ALL') return true;
+    return (station.provider || '').toUpperCase() === selectedEvProvider.toUpperCase();
+  });
 
   // Synchronize overlay popup with parent select component
   useEffect(() => {
@@ -391,7 +749,7 @@ export default function CampsMap({
           ))}
 
           {/* Render EV Station markers */}
-          {evStations.map((station) => (
+          {filteredEvStations.map((station) => (
             <AdvancedMarker
               key={station.id}
               position={{ lat: station.latitude, lng: station.longitude }}
@@ -477,6 +835,7 @@ export default function CampsMap({
                 onClick={() => {
                   setEvStations([]);
                   setSelectedEvStation(null);
+                  setSelectedEvProvider('ALL');
                 }}
                 className="text-stone-400 hover:text-stone-600 p-0.5 rounded-full hover:bg-stone-100 transition-colors"
                 title="ซ่อนสถานีทั้งหมด"
@@ -485,8 +844,34 @@ export default function CampsMap({
               </button>
             </div>
             <p className="text-[10px] leading-normal text-stone-600 font-sans">
-              ค้นหาในรัศมี 30 กม. รอบ: <strong className="text-forest-900 font-bold">{evSearchCenterName}</strong>
+              ค้นหารอบ: <strong className="text-forest-900 font-bold">{evSearchCenterName}</strong>
             </p>
+
+            {/* Choose Brand / Provider Network */}
+            <div className="mt-2 text-stone-600 font-sans border-t border-sand-100 pt-2">
+              <label htmlFor="ev-provider-select" className="block text-[9px] font-bold text-stone-500 uppercase tracking-wider mb-1">
+                ระบุค่่ายให้บริการ (Network Provider):
+              </label>
+              <select
+                id="ev-provider-select"
+                value={selectedEvProvider}
+                onChange={(e) => {
+                  setSelectedEvProvider(e.target.value);
+                  setSelectedEvStation(null); // Clear selected item detail overlay when filter shifts
+                }}
+                className="w-full bg-stone-50 border border-sand-200 text-stone-800 text-[11px] rounded-lg p-1.5 focus:ring-1 focus:ring-blue-500 focus:outline-none font-medium cursor-pointer"
+              >
+                <option value="ALL">🔌 ทั้งหมดทุกค่าย ({evStations.length} แห่ง)</option>
+                <option value="PTT">🔵 EV Station PluZ (PTT)</option>
+                <option value="PEA">🟣 PEA VOLTA</option>
+                <option value="EA">🟢 EA Anywhere</option>
+                <option value="EGAT">🟡 EleX by EGAT</option>
+                <option value="EVolt">🟠 EVolt</option>
+                <option value="SHARGE">🔴 SHARGE / REVER</option>
+                <option value="Tesla">⚫ Tesla Supercharger</option>
+                <option value="AlterVim">🟢 AlterVim (CP)</option>
+              </select>
+            </div>
           </div>
         )}
       </div>
@@ -543,10 +928,24 @@ export default function CampsMap({
             </p>
 
             {/* EV Tips */}
-            <div className="flex items-center gap-1.5 text-[10px] text-blue-700 bg-blue-50/70 px-2.5 py-1.5 rounded-lg border border-blue-100 mb-3 font-medium">
+            <div className="flex items-center gap-1.5 text-[10px] text-blue-700 bg-blue-50/70 px-2.5 py-1.5 rounded-lg border border-blue-100 mb-2.5 font-medium">
               <Zap className="h-3 w-3 text-blue-600 fill-blue-300 animate-pulse" />
               <span>รองรับการเดินทางด้วยรถ EV! กดปุ่มมุมบนซ้ายเพื่อค้นหาสถานีชาร์จ</span>
             </div>
+
+            {/* CampHub AI Shortcut Link */}
+            <button
+              id={`ai-plan-link-${activeOverlayCamp.id}`}
+              onClick={() => {
+                if (onAnalyzeWithAi) {
+                  onAnalyzeWithAi(activeOverlayCamp);
+                }
+              }}
+              className="w-full mb-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-655 text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 cursor-pointer border border-amber-300/30"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-amber-100 fill-amber-300/20 animate-pulse" />
+              <span>จัดกิจกรรม & แพ็กทริปด้วย CampHub AI</span>
+            </button>
 
             <div className="flex items-center gap-2">
               <button

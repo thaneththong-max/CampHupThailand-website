@@ -210,7 +210,7 @@ export default function App() {
     setAiError(null);
   };
 
-  const handleGetAiRecommendation = async () => {
+  const handleGetAiRecommendation = async (specificCampId?: string) => {
     setIsAiLoading(true);
     setAiError(null);
     setAiRecommendation(null);
@@ -221,11 +221,12 @@ export default function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          searchTerm,
-          filterType,
-          selectedAmenities,
+          searchTerm: specificCampId ? '' : searchTerm,
+          filterType: specificCampId ? 'all' : filterType,
+          selectedAmenities: specificCampId ? [] : selectedAmenities,
           favorites,
-          showFavoritesOnly,
+          showFavoritesOnly: specificCampId ? false : showFavoritesOnly,
+          campId: specificCampId || undefined,
         }),
       });
 
@@ -244,6 +245,14 @@ export default function App() {
     } finally {
       setIsAiLoading(false);
     }
+  };
+
+  const handleTriggerAiForCamp = async (camp: { id: string }) => {
+    const aiWidget = document.getElementById('camphub-ai-planner-widget');
+    if (aiWidget) {
+      aiWidget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    await handleGetAiRecommendation(camp.id);
   };
 
   // Core Search & Filtering logic
@@ -493,7 +502,7 @@ export default function App() {
             </div>
 
             {/* AI Recommendation Widget block with Gemini */}
-            <div className="bg-gradient-to-br from-[#fbf8f3] via-amber-50/20 to-orange-50/30 border border-amber-200/80 rounded-3xl p-5 shadow-xs relative overflow-hidden space-y-4">
+            <div id="camphub-ai-planner-widget" className="bg-gradient-to-br from-[#fbf8f3] via-amber-50/20 to-orange-50/30 border border-amber-200/80 rounded-3xl p-5 shadow-xs relative overflow-hidden space-y-4">
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-200/10 rounded-full blur-2xl pointer-events-none" />
               
               <div className="flex items-start justify-between">
@@ -792,6 +801,7 @@ export default function App() {
                     selectedCamp={selectedCamp}
                     onSelectCamp={handleSelectCamp}
                     onCloseCampDetails={() => setSelectedCamp(null)}
+                    onAnalyzeWithAi={handleTriggerAiForCamp}
                   />
                 </motion.div>
               )}
