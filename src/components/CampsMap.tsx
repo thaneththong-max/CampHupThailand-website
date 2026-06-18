@@ -79,7 +79,7 @@ const API_KEY =
   process.env.GOOGLE_MAPS_PLATFORM_KEY ||
   (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
   (globalThis as any).GOOGLE_MAPS_PLATFORM_KEY ||
-  '';
+  'AIzaSyAyHQbzKb6CXvVaVbQB64veUt-khi7AewQ';
 
 // Check if the API key is actually set and valid
 const hasValidKey = Boolean(API_KEY) && 

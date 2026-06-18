@@ -40,8 +40,8 @@ export default function SponsorPage({ user, onNavigate }: SponsorPageProps) {
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const pricePerMonth = 2000;
-  const totalPrice = pricePerMonth * months;
+  const pricePerMonth = 0;
+  const totalPrice = 0;
 
   // File picker handler
   const processFile = (file: File) => {
@@ -170,7 +170,7 @@ export default function SponsorPage({ user, onNavigate }: SponsorPageProps) {
                     <h3 style="margin-top: 0; color: #1c352d;">รายละเอียดแคมเปญ:</h3>
                     <p style="margin: 4px 0;"><b>หัวข้อโฆษณา:</b> ${submissionData.title}</p>
                     <p style="margin: 4px 0;"><b>จำนวนโฆษณา:</b> ${submissionData.months} เดือน</p>
-                    <p style="margin: 4px 0; color: #d97706; font-size: 16px;"><b>ยอดโอน:</b> ฿${totalPrice.toLocaleString()} บาท</p>
+                    <p style="margin: 4px 0; color: #d97706; font-size: 16px;"><b>ยอดโอน:</b> อัตราตามข้อตกลงร่วมกัน</p>
                     <p style="margin: 4px 0;"><b>ชื่อไฟล์สลิป:</b> ${submissionData.slipName}</p>
                   </div>
                   
@@ -255,7 +255,7 @@ export default function SponsorPage({ user, onNavigate }: SponsorPageProps) {
             ลงโฆษณาแบนเนอร์ <span className="text-earth-600">Forest Banner</span>
           </h2>
           <p className="text-xs text-stone-500 leading-normal">
-            แชร์โปรโปรชั่นลานแคมป์ อุปกรณ์เช่า หรือผลิตภัณฑ์ของคุณสู่เครือข่ายกลุ่มเป้าหมายนักแคมป์ปิ้งโดยตรง อัตราเพียง <b className="text-amber-700">฿2,000 บาท ต่อเดือน เท่านั้น</b>
+            แชร์โปรโมชั่นลานแคมป์ อุปกรณ์เช่า หรือผลิตภัณฑ์ของคุณสู่เครือข่ายกลุ่มเป้าหมายนักแคมป์ปิ้งโดยตรงเพื่อเชื่อมโยงความสุขของชาวแคมป์ปิ้ง
           </p>
         </div>
 
@@ -290,7 +290,7 @@ export default function SponsorPage({ user, onNavigate }: SponsorPageProps) {
                   <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">Bank Payment Transfer</span>
                   <h3 className="text-lg font-bold text-stone-900">ขั้นตอนการชำระสิทธิ์แบนเนอร์</h3>
                   <p className="text-xs text-stone-500 font-sans mt-0.5 leading-normal">
-                    กรุณาโอนเงินตามจำนวนเดือนที่คุณต้องการลงโฆษณา (฿2,000/เดือน) มาที่บัญชีธนาคารด้านล่าง จากนั้นแนบหลักฐานสลิปการโอนที่แบบฟอร์มด้านขวา
+                    กรุณาโอนเงินเพื่อลงโฆษณาตามพิกัดและระยะเวลาที่ได้ตกลงไว้มาที่บัญชีธนาคารด้านล่าง จากนั้นแนบหลักฐานสลิปการโอนที่แบบฟอร์มด้านขวา
                   </p>
                 </div>
 
@@ -327,7 +327,7 @@ export default function SponsorPage({ user, onNavigate }: SponsorPageProps) {
                 <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 text-stone-700 space-y-2 text-xs">
                   <span className="font-bold text-amber-800 block">ℹ️ ข้อมูลการจัดวางสิทธิ์:</span>
                   <ul className="list-disc pl-4 space-y-1 block leading-normal text-[11px]">
-                    <li>ราคาคงที่ <b className="text-amber-800">฿2,000 ต่อ 1 เดือนแรกเรตเดียว</b></li>
+                    <li>อัตราค่าธรรมเนียมตามปริมาณแบนเนอร์และระยะเวลาข้อตกลง</li>
                     <li>แบนเนอร์จะสุ่มแสดงต่อสายตายูสเซอร์บนหน้าแผนที่หลัก</li>
                     <li>เมื่อแอดมินอนุมัติแคมเปญจะเริ่มต้นสัญญาทันที</li>
                   </ul>
@@ -399,10 +399,10 @@ export default function SponsorPage({ user, onNavigate }: SponsorPageProps) {
 
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-stone-700">
-                      สรุปยอดที่ต้องโอนเงินจริง
+                      ค่าบริการลงโฆษณา
                     </label>
-                    <div className="w-full bg-sand-100 border border-sand-200 text-stone-800 p-2.5 rounded-xl font-bold font-mono text-center text-sm">
-                      ฿{totalPrice.toLocaleString()} บาทถ้วน
+                    <div className="w-full bg-sand-100 border border-sand-200 text-stone-800 p-2.5 rounded-xl font-bold text-center text-xs">
+                      อัตราค่าบริการตามข้อตกลงร่วมกัน
                     </div>
                   </div>
                 </div>
