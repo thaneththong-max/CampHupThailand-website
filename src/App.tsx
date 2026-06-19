@@ -7,12 +7,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, SlidersHorizontal, RefreshCw, Layers, Sparkles, 
-  Trees, Landmark, Compass, Heart, Map, List, EyeOff 
+  Trees, Landmark, Compass, Heart, List, EyeOff, Sunset, ShieldCheck
 } from 'lucide-react';
 
 import Header from './components/Header';
 import CampCard from './components/CampCard';
-import CampsMap from './components/CampsMap';
 import CampDetails from './components/CampDetails';
 import AuthPage from './components/AuthPage';
 import ProfilePage from './components/ProfilePage';
@@ -55,9 +54,6 @@ export default function App() {
     fallbackUsed?: boolean;
     fallbackReason?: string;
   } | null>(null);
-
-  // Mobile View Mode Toggle (Map vs List)
-  const [mobileViewMode, setMobileViewMode] = useState<'list' | 'map'>('list');
 
   // Favorites stored in localStorage
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -298,8 +294,6 @@ export default function App() {
   // Handle campground card select (opens Details and zooms map marker)
   const handleSelectCamp = (camp: CampSite) => {
     setSelectedCamp(camp);
-    // If on mobile, auto-switch to map/details view to instantly show the detail page content
-    setMobileViewMode('map');
   };
 
   if (currentPath === '/auth') {
@@ -345,41 +339,12 @@ export default function App() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         
-        {/* Mobile quick toggler (List vs Map) */}
-        <div className="flex md:hidden items-center justify-center bg-sand-100 p-1.5 rounded-2xl mb-5 space-x-2 border border-sand-200">
-          <button
-            id="mobile-view-list-btn"
-            onClick={() => setMobileViewMode('list')}
-            className={`flex-1 flex items-center justify-center py-2.5 rounded-xl text-xs font-semibold gap-1.5 transition-all ${
-              mobileViewMode === 'list'
-                ? 'bg-forest-900 text-white shadow-sm'
-                : 'text-stone-600 hover:text-stone-900'
-            }`}
-          >
-            <List className="h-4 w-4" />
-            <span>รายการแคมป์ ({filteredCamps.length})</span>
-          </button>
-          
-          <button
-            id="mobile-view-map-btn"
-            onClick={() => setMobileViewMode('map')}
-            className={`flex-1 flex items-center justify-center py-2.5 rounded-xl text-xs font-semibold gap-1.5 transition-all ${
-              mobileViewMode === 'map'
-                ? 'bg-forest-900 text-white shadow-sm'
-                : 'text-stone-600 hover:text-stone-900'
-            }`}
-          >
-            <Map className="h-4 w-4" />
-            <span>แผนที่สีป่าเกลี่ยบุด ({camps.length})</span>
-          </button>
-        </div>
-
         {/* Outer Split Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 items-start">
           
           {/* LEFT PANEL: Filters and Card Listings */}
           <div className={`space-y-6 lg:col-span-6 xl:col-span-5 ${
-            mobileViewMode === 'list' ? 'block' : 'hidden md:block'
+            selectedCamp ? 'hidden md:block' : 'block'
           }`}>
             
             {/* Filtering Box Container */}
@@ -739,9 +704,9 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT PANEL: Map / Selected Details Sticky display */}
+          {/* RIGHT PANEL: Selected Details Sticky display */}
           <div className={`lg:col-span-6 xl:col-span-7 sticky top-24 ${
-            mobileViewMode === 'map' ? 'block' : 'hidden md:block'
+            selectedCamp ? 'block' : 'hidden md:block'
           }`}>
             
             <AnimatePresence mode="wait">
@@ -757,11 +722,11 @@ export default function App() {
                 >
                   <div className="flex items-center justify-between bg-sand-100/60 p-2 rounded-2xl border border-sand-200">
                     <button
-                      id="back-to-map-button-link"
+                      id="back-to-list-button-link"
                       onClick={() => setSelectedCamp(null)}
-                      className="text-xs font-semibold text-forest-900 hover:text-forest-700 flex items-center gap-1 p-2 rounded-lg bg-white/80 hover:bg-white border border-sand-300 transition-all"
+                      className="text-xs font-semibold text-forest-900 hover:text-forest-700 flex items-center gap-1 p-2 rounded-lg bg-white/80 hover:bg-white border border-sand-300 transition-all cursor-pointer"
                     >
-                      <span>← ปิดตรงนี้เพื่อแสดงแผนที่เดี่ยว</span>
+                      <span>← ย้อนกลับไปหน้ารายการหลัก</span>
                     </button>
 
                     <span className="text-[10px] font-mono font-medium text-stone-500 mr-2">
@@ -777,33 +742,123 @@ export default function App() {
                   />
                 </motion.div>
               ) : (
-                /* Google maps interface */
+                /* Beautiful Camping Guide Placeholder */
                 <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-4"
-                  key="google-maps-wrapper"
+                  className="space-y-6"
+                  key="camping-guide-placeholder-wrapper"
                 >
-                  <div className="flex items-center justify-between px-1">
-                    <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
-                      <Compass className="h-4 w-4 text-forest-700" />
-                      แผนที่พิกัดจุดกางเต็นท์โทนป่าเอิร์ธโทน
-                    </h3>
+                  {/* Decorative Header */}
+                  <div className="bg-gradient-to-br from-forest-900 to-emerald-950 text-white rounded-3xl p-6 shadow-md relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-700/20 rounded-full blur-2xl pointer-events-none" />
+                    <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-teal-800/30 rounded-full blur-xl pointer-events-none" />
                     
-                    <span className="text-xs font-semibold bg-sand-200 text-stone-700 px-3 py-1 rounded-full border border-sand-300">
-                      🟢 อุทยาน | 🟠 เอกชน
-                    </span>
+                    <div className="relative space-y-3">
+                      <div className="bg-white/10 backdrop-blur-md text-emerald-300 text-[10px] uppercase font-bold tracking-widest px-3 py-1 rounded-full border border-white/10 w-fit">
+                        🌲 ยินดีต้อนรับสู่แคมป์ฮับ
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-bold tracking-tight">
+                        จุดหมายปลายทางของคนรักแคมป์ปิ้งธรรมชาติ
+                      </h3>
+                      <p className="text-xs text-emerald-100/90 leading-relaxed max-w-md">
+                        เลือกดูจุดกางเต็นท์ที่คุณสนใจจากรายชื่อทางด้านซ้ายเพื่อเปิดชมข้อมูลบริการ สิ่งอำนวยความสะดวก ภาพถ่ายลาน และสภาพอากาศแบบเรียลไทม์ได้ทันที
+                      </p>
+                    </div>
                   </div>
 
-                  <CampsMap
-                    camps={filteredCamps}
-                    selectedCamp={selectedCamp}
-                    onSelectCamp={handleSelectCamp}
-                    onCloseCampDetails={() => setSelectedCamp(null)}
-                    onAnalyzeWithAi={handleTriggerAiForCamp}
-                  />
+                  {/* Seasonal Travel Guide Widget */}
+                  <div className="bg-white rounded-3xl border border-sand-200 p-5 shadow-xs space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-amber-100 rounded-xl text-amber-800">
+                        <Sunset className="h-4 w-4" />
+                      </div>
+                      <h4 className="font-bold text-stone-900 text-sm">
+                        คู่มือแคมป์ปิ้งประจำสัปดาห์ (Green Season)
+                      </h4>
+                    </div>
+                    <div className="bg-amber-50/55 p-3.5 rounded-2xl border border-amber-100 text-xs text-amber-900 leading-relaxed space-y-1.5">
+                      <p className="font-semibold flex items-center gap-1.5">
+                        <ShieldCheck className="h-3.5 w-3.5 text-amber-700 font-bold shrink-0" />
+                        เตรียมรับมือฤดูฝนชุ่มฉ่ำ
+                      </p>
+                      <p className="text-stone-600">
+                        ช่วงนี้ป่าเขาจะมีความเขียวชะอุ่ม สดชื่น และหมอกยามเช้าที่สวยงาม แต่ควรเพิ่มความระมัดระวังในการกางเต็นท์ริมตลิ่งธารน้ำตก และเตรียมแผ่นกราวด์ชีทรองพื้นเต็นท์เสมอนะครับ
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Essential Checklist for Camping */}
+                  <div className="bg-white rounded-3xl border border-sand-200 p-5 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-stone-900 text-sm flex items-center gap-2">
+                        <Trees className="h-4 w-4 text-forest-700" />
+                        เช็กลิสต์อุปกรณ์กางเต็นท์ยอดฮิตที่ขาดไม่ได้
+                      </h4>
+                      <span className="text-[10px] text-stone-400 font-medium font-sans">
+                        5 ชิ้นที่แคมเปอร์มือโปรเลือก
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-sand-50/60 border border-sand-150">
+                        <span className="text-emerald-700 bg-emerald-50 rounded-lg p-1 mt-0.5 font-bold text-xs shrink-0">
+                          1
+                        </span>
+                        <div className="text-[11px] leading-tight text-stone-700">
+                          <span className="block font-bold text-stone-900 mb-0.5">ฟลายชีท / ทาร์ปกันน้ำ</span>
+                          เลือกสเปกเคลือบกันน้ำ 2000mm+ เพื่อให้ปลอดภัยยามฝนเท
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-sand-50/60 border border-sand-150">
+                        <span className="text-emerald-700 bg-emerald-50 rounded-lg p-1 mt-0.5 font-bold text-xs shrink-0">
+                          2
+                        </span>
+                        <div className="text-[11px] leading-tight text-stone-700">
+                          <span className="block font-bold text-stone-900 mb-0.5">พาวเวอร์แบงค์ / Power Station</span>
+                          พิกัดลึกธรรมชาติในอุทยานอาจไม่มีปลั๊กไฟให้พ่วงใช้งาน
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-sand-50/60 border border-sand-150">
+                        <span className="text-emerald-700 bg-emerald-50 rounded-lg p-1 mt-0.5 font-bold text-xs shrink-0">
+                          3
+                        </span>
+                        <div className="text-[11px] leading-tight text-stone-700">
+                          <span className="block font-bold text-stone-900 mb-0.5">สเปรย์ป้องกันแมลงออร์แกนิก</span>
+                          หลีกเลี่ยงยุงป่าและริ้นน้ำตื้น ยิ่งไปแคมป์กับเด็กยิ่งแนะนำมาก
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-sand-50/60 border border-sand-150">
+                        <span className="text-emerald-700 bg-emerald-50 rounded-lg p-1 mt-0.5 font-bold text-xs shrink-0">
+                          4
+                        </span>
+                        <div className="text-[11px] leading-tight text-stone-700">
+                          <span className="block font-bold text-stone-900 mb-0.5">ฟูกหรือเบาะรองนอนหนา</span>
+                          พื้นสนามหญ้าป่าเขามักจะมีหินขรุขระ ป้องกันอาการปวดเมื่อยหลัง
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pro Tip Box */}
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50/50 rounded-3xl p-4 border border-orange-100 flex items-start gap-3">
+                    <div className="text-orange-500 mt-0.5 shrink-0">
+                      <Sparkles className="h-4 w-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="font-bold text-[11px] text-orange-950 uppercase tracking-wider block">
+                        เคล็ดลับอัจฉริยะลัดพิกัด:
+                      </span>
+                      <p className="text-[11px] text-stone-600 leading-normal">
+                        ต้องการแอปช่วยจัดทริปเฉพาะกลุ่ม? ลองระบุตัวกรองที่ชอบ เช่น <span className="font-semibold text-stone-800">"อุทยาน"</span> และกดปุ่ม <span className="font-semibold text-stone-800">"CampHub AI ผู้จัดทริปอัจฉริยะ"</span> เพื่อรับคำตอบจากระบบ AI สุดพิเศษทันที!
+                      </p>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
