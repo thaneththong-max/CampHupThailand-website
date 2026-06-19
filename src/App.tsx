@@ -215,18 +215,19 @@ export default function App() {
     setAiError(null);
     setAiRecommendation(null);
     try {
+      const campIdStr = typeof specificCampId === 'string' ? specificCampId : undefined;
       const response = await fetch('/api/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          searchTerm: specificCampId ? '' : searchTerm,
-          filterType: specificCampId ? 'all' : filterType,
-          selectedAmenities: specificCampId ? [] : selectedAmenities,
+          searchTerm: campIdStr ? '' : searchTerm,
+          filterType: campIdStr ? 'all' : filterType,
+          selectedAmenities: campIdStr ? [] : selectedAmenities,
           favorites,
-          showFavoritesOnly: specificCampId ? false : showFavoritesOnly,
-          campId: specificCampId || undefined,
+          showFavoritesOnly: campIdStr ? false : showFavoritesOnly,
+          campId: campIdStr || undefined,
         }),
       });
 
@@ -540,7 +541,7 @@ export default function App() {
                   </div>
                   <button
                     id="get-ai-recommendations-btn"
-                    onClick={handleGetAiRecommendation}
+                    onClick={() => handleGetAiRecommendation()}
                     className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs py-3 px-4 rounded-2xl shadow-sm transition-all hover:shadow-md active:scale-[0.99] flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
@@ -569,7 +570,7 @@ export default function App() {
                   <p className="font-semibold">⚠️ บริการแนะนำบกพร่องชั่วคราว:</p>
                   <p className="text-[11px] text-red-650">{aiError}</p>
                   <button 
-                    onClick={handleGetAiRecommendation}
+                    onClick={() => handleGetAiRecommendation()}
                     className="text-[10px] font-bold text-red-700 underline hover:text-red-800"
                   >
                     ลองอีกครั้ง
@@ -657,7 +658,7 @@ export default function App() {
                           🚩 เปิดดูพิกัดแผนที่ & รีวิว
                         </button>
                         <button
-                          onClick={handleGetAiRecommendation}
+                          onClick={() => handleGetAiRecommendation()}
                           className="w-full bg-white hover:bg-sand-50/50 text-stone-700 font-bold text-[11px] py-2.5 px-3 rounded-xl border border-sand-300 shadow-3xs transition-colors flex items-center justify-center gap-1 shrink-0 cursor-pointer"
                         >
                           <RefreshCw className="h-3 w-3" />

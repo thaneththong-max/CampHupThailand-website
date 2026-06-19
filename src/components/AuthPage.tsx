@@ -242,7 +242,40 @@ export default function AuthPage({ onNavigate }: AuthPageProps) {
             </div>
           )}
 
-          {/* Core Auth Forms */}
+          {/* Primary Google Gmail Auth Option - Extremely prominent */}
+          <div className="space-y-3 bg-gradient-to-br from-red-50/40 via-white to-orange-50/30 p-4 sm:p-5 rounded-3xl border border-red-100 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-[#EA4335] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#EA4335] animate-pulse" />
+                สมัครและเข้าสู่ระบบด้วย Google (Gmail)
+              </span>
+              <span className="bg-[#EA4335]/15 text-[#D62F20] text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                แนะนำ: ง่ายใน 1 คลิก
+              </span>
+            </div>
+            <button
+              id="btn-google-oauth-sign-in"
+              type="button"
+              onClick={handleGoogleAuth}
+              disabled={isLoading}
+              className="w-full bg-[#EA4335] hover:bg-[#D62F20] text-white font-extrabold py-3.5 px-5 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-3 transition-all duration-300 shadow-md hover:shadow-lg active:scale-99 hover:scale-101 border border-red-500 cursor-pointer text-center"
+            >
+              <Chrome className="h-4.5 w-4.5 text-white fill-white/10 shrink-0" />
+              <span>ลงทะเบียน / เข้าสู่ระบบด้วย Google Gmail</span>
+            </button>
+            <p className="text-[10px] text-stone-500 leading-normal text-center">
+              *ข้อมูลสมาชิก เช่น อีเมล รูปโปรไฟล์ และชื่อแสดงผล จะถูกซิงก์เข้าระบบโดยอัตโนมัติอย่างถูกต้องและปลอดภัย
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="relative flex py-2 items-center">
+            <div className="flex-grow border-t border-stone-200"></div>
+            <span className="flex-shrink mx-4 text-stone-450 text-[10px] uppercase font-bold tracking-widest">หรือ ลงชื่อเข้าใช้ด้วยอีเมลปกติ</span>
+            <div className="flex-grow border-t border-stone-200"></div>
+          </div>
+
+          {/* Core Auth Forms - Now secondary */}
           <form id="email-auth-form" onSubmit={handleEmailAuth} className="space-y-4">
             {isSignUp && (
               <div className="space-y-1.5">
@@ -334,35 +367,17 @@ export default function AuthPage({ onNavigate }: AuthPageProps) {
             </button>
           </form>
 
-          {/* Social Sign-In divider */}
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-stone-100"></div>
-            <span className="flex-shrink mx-4 text-stone-400 text-[10px] uppercase font-bold tracking-widest">หรือไปรัดผ่านคลาวด์</span>
-            <div className="flex-grow border-t border-stone-100"></div>
-          </div>
-
-          {/* Google & Facebook Auth Buttons */}
-          <div className="flex flex-col gap-2 w-full">
-            <button
-              id="btn-google-oauth-sign-in"
-              type="button"
-              onClick={handleGoogleAuth}
-              disabled={isLoading}
-              className="w-full bg-white hover:bg-stone-50 text-stone-800 border border-stone-200 font-bold p-3 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all duration-300 shadow-sm hover:scale-101 active:scale-99"
-            >
-              <Chrome className="h-4 w-4 text-red-500 fill-red-100" />
-              <span>เข้าสู่ระบบด้วย Google (Google OAuth)</span>
-            </button>
-
+          {/* Secondary Facebook Auth fallback */}
+          <div className="pt-2">
             <button
               id="btn-facebook-auth-sign-in"
               type="button"
               onClick={handleFacebookAuth}
               disabled={isLoading}
-              className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white font-bold p-3 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all duration-300 shadow-sm hover:scale-101 active:scale-99"
+              className="w-full bg-[#1877F2]/10 hover:bg-[#1877F2]/15 text-[#1877F2] font-semibold p-2.5 rounded-2xl text-[11px] flex items-center justify-center gap-1.5 transition-all duration-300 border border-[#1877F2]/20"
             >
-              <Facebook className="h-4 w-4 fill-white" />
-              <span>Continue with Facebook</span>
+              <Facebook className="h-3.5 w-3.5 fill-[#1877F2]" />
+              <span>เข้าสู่ระบบสำรองด้วย Facebook</span>
             </button>
           </div>
 
