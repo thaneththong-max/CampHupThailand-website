@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Star, MapPin, Trees, Mountain, Calendar, Info, 
-  Phone, DollarSign, Send, MessageSquare, Check, Sparkles, Navigation, Lock, LogIn, ArrowLeft
+  Phone, DollarSign, Send, MessageSquare, Check, Sparkles, Navigation, Lock, LogIn, ArrowLeft, Share2
 } from 'lucide-react';
 import { CampSite, Review } from '../types';
 import { db, auth } from '../lib/firebase';
@@ -121,6 +121,44 @@ export default function CampDetails({
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [comment, setComment] = useState('');
   const [activeTab, setActiveTab] = useState<'info' | 'reviews'>('info');
+  const [shareStatus, setShareStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}?camp=${camp.id}`;
+    const shareTitle = `🏕️ แนะนำจุดกางเต็นท์ธรรมชาติ: ${camp.name}`;
+    const shareText = `🏕️ แนะนำจุดกางเต็นท์ธรรมชาติ: ${camp.name} (จังหวัด ${camp.province})\n🏔️ ความสูงจากระดับน้ำทะเล: ${camp.elevation}\n📍 พิกัด: ${camp.latitude}, ${camp.longitude}\n🌿 ดูจุดเที่ยวอื่นๆ เพิ่มเติมและปักหมุดลานแคมป์ทางพิกัดแอพฯ: ${shareUrl}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        setShareStatus('success');
+        setTimeout(() => setShareStatus('idle'), 2500);
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          copyToClipboard(shareUrl);
+        }
+      }
+    } else {
+      copyToClipboard(shareUrl);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setShareStatus('success');
+        setTimeout(() => setShareStatus('idle'), 2500);
+      })
+      .catch((err) => {
+        console.error('Failed to copy text: ', err);
+        setShareStatus('error');
+        setTimeout(() => setShareStatus('idle'), 2500);
+      });
+  };
 
   // Monitor Auth state changes
   useEffect(() => {
@@ -279,7 +317,7 @@ export default function CampDetails({
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: -50, scale: 0.98 }}
       transition={{ type: 'spring', damping: 25, stiffness: 140 }}
-      className="bg-white rounded-3xl overflow-hidden border border-sand-200 shadow-xl flex flex-col h-full max-h-[90vh] lg:max-h-none"
+      className="bg-white rounded-3xl overflow-hidden border border-sand-200 shadow-xl flex flex-col h-full max-h-[90vh] lg:max-h-none relative"
     >
       {/* Header Close triggers */}
       <div className="relative h-64 sm:h-80 bg-stone-100">
@@ -302,10 +340,20 @@ export default function CampDetails({
           <span>ย้อนกลับ</span>
         </button>
 
+        {/* Action Share Button */}
+        <button
+          id="share-camp-details-button-header"
+          onClick={handleShare}
+          className="absolute top-4 right-16 p-2.5 bg-black/60 hover:bg-black/80 text-white rounded-full transition-all duration-300 z-10 md:p-2 min-w-[40px] min-h-[40px] flex items-center justify-center shadow-md border border-white/10 backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95"
+          title="แชร์พิกัดและลานกางเต็นท์นี้"
+        >
+          <Share2 className="h-4.5 w-4.5" />
+        </button>
+
         <button
           id="close-camp-info-details"
           onClick={onClose}
-          className="absolute top-4 right-4 p-2.5 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors z-10 md:p-2 min-w-[40px] min-h-[40px] flex items-center justify-center shadow-md border border-white/10 backdrop-blur-md"
+          className="absolute top-4 right-4 p-2.5 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors z-10 md:p-2 min-w-[40px] min-h-[40px] flex items-center justify-center shadow-md border border-white/10 backdrop-blur-md cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>
@@ -556,7 +604,7 @@ export default function CampDetails({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Navigation className="h-4 w-4 text-earth-600" />
-                  <h4 className="text-sm font-bold text-stone-900">พิกัดทางภูมิศาสตร์</h4>
+                  <h4 className="text-sm font-bold text-stone-900">พิกัดทางภูมิศาสตร์และการเดินทาง</h4>
                 </div>
                 <span className="text-[10px] font-mono bg-stone-200 px-2 py-0.5 rounded text-stone-600">
                   {camp.latitude.toFixed(4)}, {camp.longitude.toFixed(4)}
@@ -564,17 +612,28 @@ export default function CampDetails({
               </div>
               
               <p className="text-xs text-stone-600 leading-relaxed">
-                คลิกปุ่มนำทางด้านล่างเพื่อเปิดเส้นทางขับรถบน Google Maps ได้ทันที (พิกัดปักตรงจุดลานกางเต็นท์แน่นอน)
+                คลิกปุ่มเริ่มเดินทางบน Google Maps หรือกดแชร์พิกัดพร้อมรายละเอียดของลานกางเต็นท์นี้ให้เพื่อนๆ ร่วมทริปของคุณได้อย่างรวดเร็วและปลอดภัย
               </p>
 
-              <button
-                id="camp-navigation-directions-button"
-                onClick={handleOpenDirections}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-forest-800 to-forest-700 hover:from-forest-700 hover:to-forest-600 text-sand-50 font-bold py-3 px-4 rounded-xl shadow border border-forest-900 transition-all duration-300 transform active:scale-95 group text-sm"
-              >
-                <Navigation className="h-4 w-4 animate-pulse group-hover:translate-x-0.5 transition-transform" />
-                <span>Get Directions (ขอเส้นทางนำทาง)</span>
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  id="camp-navigation-directions-button"
+                  onClick={handleOpenDirections}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-forest-800 to-forest-700 hover:from-forest-700 hover:to-forest-600 text-sand-50 font-bold py-3 px-4 rounded-xl shadow border border-forest-900 transition-all duration-300 transform active:scale-95 group text-xs sm:text-sm cursor-pointer"
+                >
+                  <Navigation className="h-4 w-4 animate-pulse group-hover:translate-x-0.5 transition-transform" />
+                  <span>Get Directions (นำทางแผนที่)</span>
+                </button>
+
+                <button
+                  id="camp-share-social-detail-button"
+                  onClick={handleShare}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-extrabold py-3 px-4 rounded-xl shadow border border-amber-600/40 transition-all duration-300 transform active:scale-95 group text-xs sm:text-sm cursor-pointer"
+                >
+                  <Share2 className="h-4.5 w-4.5 group-hover:scale-115 transition-transform" />
+                  <span>แชร์ลานนี้ & คัดลอกลิงก์</span>
+                </button>
+              </div>
             </div>
 
             {/* Camera interface module for live camp reporting */}
@@ -729,6 +788,36 @@ export default function CampDetails({
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Share Toast Notification Alert */}
+      <AnimatePresence>
+        {shareStatus !== 'idle' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            className={`absolute bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-bold border max-w-[85%] whitespace-nowrap ${
+              shareStatus === 'success'
+                ? 'bg-emerald-950 border-emerald-800 text-emerald-50 shadow-emerald-900/10'
+                : 'bg-red-950 border-red-800 text-red-50 shadow-red-900/10'
+            }`}
+          >
+            {shareStatus === 'success' ? (
+              <>
+                <svg className="h-4 w-4 text-emerald-450 shrink-0 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>คัดลอกลิงก์สำเร็จ! ส่งต่อชวนเพื่อนไปแค้มป์ได้ทันที 🏕️</span>
+              </>
+            ) : (
+              <>
+                <X className="h-4 w-4 text-red-400 shrink-0" />
+                <span>เกิดข้อผิดพลาดในการแชร์ลิงก์ โปรดลองอีกครั้ง</span>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
