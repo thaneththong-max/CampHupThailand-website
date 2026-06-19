@@ -130,6 +130,38 @@ export default function AuthPage({ onNavigate }: AuthPageProps) {
     }
   };
 
+  const handleDemoSignIn = async () => {
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const demoEmail = 'democamper@camphub.com';
+      const demoPassword = 'democamper123';
+      try {
+        // Try to sign in
+        const userCredential = await signInWithEmailAndPassword(auth, demoEmail, demoPassword);
+        await registerOrFetchUser(userCredential.user.uid, demoEmail, 'นักแคมป์ปิ้งจำลอง (Demo)');
+      } catch (err: any) {
+        // If not found or credential invalid, create it
+        if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-email') {
+          const userCredential = await createUserWithEmailAndPassword(auth, demoEmail, demoPassword);
+          await registerOrFetchUser(userCredential.user.uid, demoEmail, 'นักแคมป์ปิ้งจำลอง (Demo)');
+        } else {
+          throw err;
+        }
+      }
+      setSuccess('เข้าสู่ระบบด่วนด้วยบัญชีทดลองสำเร็จ เรียบร้อย!');
+      setTimeout(() => {
+        onNavigate('/');
+      }, 1500);
+    } catch (err: any) {
+      console.error(err);
+      setError('ไม่สามารถใช้บัญชีทดลองได้ในระบบชั่วคราว โปรดใช้วิธีอื่น');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div 
       id="auth-container" 
@@ -367,14 +399,25 @@ export default function AuthPage({ onNavigate }: AuthPageProps) {
             </button>
           </form>
 
-          {/* Secondary Facebook Auth fallback */}
-          <div className="pt-2">
+          {/* Secondary Social/Demo Auth fallbacks */}
+          <div className="space-y-2 pt-2">
+            <button
+              id="btn-demo-auth-sign-in"
+              type="button"
+              onClick={handleDemoSignIn}
+              disabled={isLoading}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-stone-900 font-extrabold p-3 rounded-2xl text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all duration-300 border border-amber-600/30 shadow-xs cursor-pointer"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-amber-950 shrink-0 animate-bounce" />
+              <span>⚡ ทดลองเข้าใช้งานทันทีด้วยบัญชีตัวอย่าง</span>
+            </button>
+
             <button
               id="btn-facebook-auth-sign-in"
               type="button"
               onClick={handleFacebookAuth}
               disabled={isLoading}
-              className="w-full bg-[#1877F2]/10 hover:bg-[#1877F2]/15 text-[#1877F2] font-semibold p-2.5 rounded-2xl text-[11px] flex items-center justify-center gap-1.5 transition-all duration-300 border border-[#1877F2]/20"
+              className="w-full bg-[#1877F2]/10 hover:bg-[#1877F2]/15 text-[#1877F2] font-semibold p-2.5 rounded-2xl text-[11px] flex items-center justify-center gap-1.5 transition-all duration-300 border border-[#1877F2]/20 cursor-pointer"
             >
               <Facebook className="h-3.5 w-3.5 fill-[#1877F2]" />
               <span>เข้าสู่ระบบสำรองด้วย Facebook</span>
