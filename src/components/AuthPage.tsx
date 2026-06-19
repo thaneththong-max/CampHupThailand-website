@@ -274,30 +274,82 @@ export default function AuthPage({ onNavigate }: AuthPageProps) {
             </div>
           )}
 
-          {/* Primary Google Gmail Auth Option - Extremely prominent */}
-          <div className="space-y-3 bg-gradient-to-br from-red-50/40 via-white to-orange-50/30 p-4 sm:p-5 rounded-3xl border border-red-100 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-[#EA4335] flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#EA4335] animate-pulse" />
-                สมัครและเข้าสู่ระบบด้วย Google (Gmail)
-              </span>
-              <span className="bg-[#EA4335]/15 text-[#D62F20] text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                แนะนำ: ง่ายใน 1 คลิก
-              </span>
+          {/* Primary Google Gmail Auth Option - Extremely prominent & highly polished */}
+          <div className="relative group overflow-hidden bg-gradient-to-br from-red-50 via-white to-amber-50/50 p-5 sm:p-6 rounded-3xl border-2 border-red-100 shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-200">
+            {/* Absolute decorative blurred badge background */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-red-100/40 rounded-full blur-2xl pointer-events-none transition-all group-hover:scale-125" />
+            <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-amber-100/30 rounded-full blur-xl pointer-events-none" />
+
+            <div className="relative space-y-4">
+              {/* Header Badge Row */}
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <span className="text-[10px] sm:text-xs uppercase font-extrabold tracking-widest text-[#EA4335] flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#EA4335] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#EA4335]"></span>
+                  </span>
+                  แนะนำ: ทางเลือกที่รวดเร็วที่สุด
+                </span>
+                <span className="bg-[#EA4335]/10 text-[#D62F20] text-[9px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider border border-red-200/50">
+                  1-Click Sign In
+                </span>
+              </div>
+
+              {/* Main Headline & Description */}
+              <div className="space-y-1">
+                <h4 className="text-stone-900 font-extrabold text-[15px] sm:text-base leading-tight">
+                  ลงทะเบียนและเข้าสู่ระบบด้วยบัญชี Google
+                </h4>
+                <p className="text-stone-500 text-xs leading-relaxed">
+                  เชื่อมต่อบัญชี Gmail ของคุณเพื่อเข้าใช้บริการทันทีโดยไม่ต้องสร้างรหัสผ่านใหม่
+                </p>
+              </div>
+
+              {/* Benefit Checklist Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <div className="flex items-start gap-2 bg-white/70 p-2 rounded-xl border border-amber-100/50">
+                  <span className="text-emerald-600 bg-emerald-50 rounded-full p-0.5 mt-0.5">
+                    <CheckCircle2 className="h-3 w-3 shrink-0" />
+                  </span>
+                  <div className="text-[11px] font-medium text-stone-700 leading-tight">
+                    <span className="block font-bold">สะดวกปลอดภัยใจร่ม</span>
+                    เชื่อมต่อผ่านระบบ Google SSL
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 bg-white/70 p-2 rounded-xl border border-amber-100/50">
+                  <span className="text-emerald-600 bg-emerald-50 rounded-full p-0.5 mt-0.5">
+                    <CheckCircle2 className="h-3 w-3 shrink-0" />
+                  </span>
+                  <div className="text-[11px] font-medium text-stone-700 leading-tight">
+                    <span className="block font-bold">ซิงก์โปรไฟล์อัตโนมัติ</span>
+                    ดึงรูปโปรไฟล์จริงเพื่อระบุพิกัดเต็นท์
+                  </div>
+                </div>
+              </div>
+
+              {/* Spectacular Google Auth Call to Action Button */}
+              <button
+                id="btn-google-oauth-sign-in"
+                type="button"
+                onClick={handleGoogleAuth}
+                disabled={isLoading}
+                className="w-full relative overflow-hidden bg-gradient-to-r from-[#EA4335] via-[#Ea5346] to-[#EA4335] hover:from-[#D62F20] hover:to-[#EA4335] text-white font-extrabold py-3.5 px-6 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-3 transition-all duration-300 shadow-md hover:shadow-xl active:scale-[0.98] group-hover:scale-[1.01] border-b-4 border-red-700 cursor-pointer text-center select-none disabled:opacity-75 disabled:cursor-wait"
+              >
+                {/* Glossy sheen overlay effect */}
+                <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 translate-x-[-150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out pointer-events-none" />
+                
+                <Chrome className="h-5 w-5 text-white shrink-0 filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]" />
+                <span className="tracking-tight filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.15)]">
+                  ลงทะเบียน / เข้าสู่ระบบด้วย Google Gmail
+                </span>
+              </button>
+
+              <div className="flex items-center justify-center gap-1.5 text-[10px] text-stone-400 font-sans mt-1">
+                <span>🔒 ปลอดภัยสูงสุดด้วยโปรโตคอล OAuth 2.0</span>
+                <span>•</span>
+                <span>ข้อมูลได้รับความคุ้มครองตามนโยบาย PDPA</span>
+              </div>
             </div>
-            <button
-              id="btn-google-oauth-sign-in"
-              type="button"
-              onClick={handleGoogleAuth}
-              disabled={isLoading}
-              className="w-full bg-[#EA4335] hover:bg-[#D62F20] text-white font-extrabold py-3.5 px-5 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-3 transition-all duration-300 shadow-md hover:shadow-lg active:scale-99 hover:scale-101 border border-red-500 cursor-pointer text-center"
-            >
-              <Chrome className="h-4.5 w-4.5 text-white fill-white/10 shrink-0" />
-              <span>ลงทะเบียน / เข้าสู่ระบบด้วย Google Gmail</span>
-            </button>
-            <p className="text-[10px] text-stone-500 leading-normal text-center">
-              *ข้อมูลสมาชิก เช่น อีเมล รูปโปรไฟล์ และชื่อแสดงผล จะถูกซิงก์เข้าระบบโดยอัตโนมัติอย่างถูกต้องและปลอดภัย
-            </p>
           </div>
 
           {/* Divider */}
