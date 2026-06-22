@@ -19,6 +19,7 @@ import AdminPage from './components/AdminPage';
 import ContactPage from './components/ContactPage';
 import SponsorPage from './components/SponsorPage';
 import AdBanner from './components/AdBanner';
+import AiCampMap from './components/AiCampMap';
 import { CAMP_SITES } from './data/camps';
 import { CampSite, CampType, Review } from './types';
 import { auth, signOut, onAuthStateChanged, db } from './lib/firebase';
@@ -54,6 +55,7 @@ export default function App() {
     fallbackUsed?: boolean;
     fallbackReason?: string;
   } | null>(null);
+  const [aiViewMode, setAiViewMode] = useState<'text' | 'map'>('text');
 
   // Favorites stored in localStorage
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -210,6 +212,7 @@ export default function App() {
     setIsAiLoading(true);
     setAiError(null);
     setAiRecommendation(null);
+    setAiViewMode('text');
     try {
       const campIdStr = typeof specificCampId === 'string' ? specificCampId : undefined;
       const response = await fetch('/api/recommendations', {
@@ -471,30 +474,59 @@ export default function App() {
             <div id="camphub-ai-planner-widget" className="bg-gradient-to-br from-[#fbf8f3] via-amber-50/20 to-orange-50/30 border border-amber-200/80 rounded-3xl p-5 shadow-xs relative overflow-hidden space-y-4">
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-200/10 rounded-full blur-2xl pointer-events-none" />
               
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-sand-200/50">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-gradient-to-tr from-amber-500 to-orange-500 rounded-2xl text-white shadow-xs">
+                  <div className="p-2 bg-gradient-to-tr from-amber-500 to-orange-500 rounded-2xl text-white shadow-xs shrink-0">
                     <Sparkles className="h-4 w-4 animate-pulse" />
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-stone-900 leading-tight">
                       CampHub AI ผู้จัดทริปอัจฉริยะ
                     </h3>
-                    <p className="text-[11px] text-stone-500">
-                      แนะนำลานกางเต็นท์พรีเมียมเฉพาะเจาะจงตามตัวกรองของคุณด้วย Gemini AI
+                    <p className="text-[10px] sm:text-[11px] text-stone-500 truncate">
+                      จัดแผนลานกางเต็นท์พรีเมียมเฉพาะตัวแบบเรียลไทม์
                     </p>
                   </div>
                 </div>
-                {aiRecommendation && (
-                  <button 
-                    onClick={() => {
-                      setAiRecommendation(null);
-                      setAiError(null);
-                    }}
-                    className="text-[10px] text-stone-400 hover:text-stone-700 font-semibold cursor-pointer"
-                  >
-                    ย่อกลับ
-                  </button>
+
+                {aiRecommendation && !isAiLoading && (
+                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                    {/* View Mode Toggle Button Group */}
+                    <div className="flex items-center bg-sand-200/80 p-0.5 rounded-xl border border-sand-300 shadow-2xs">
+                      <button
+                        id="ai-toggle-view-text-btn"
+                        onClick={() => setAiViewMode('text')}
+                        className={`text-[10px] sm:text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          aiViewMode === 'text'
+                            ? 'bg-amber-500 text-white shadow-xs'
+                            : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                      >
+                        คำแนะนำ
+                      </button>
+                      <button
+                        id="ai-toggle-view-map-btn"
+                        onClick={() => setAiViewMode('map')}
+                        className={`text-[10px] sm:text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          aiViewMode === 'map'
+                            ? 'bg-amber-500 text-white shadow-xs'
+                            : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                      >
+                        แผนที่โต้ตอบ
+                      </button>
+                    </div>
+
+                    <button 
+                      onClick={() => {
+                        setAiRecommendation(null);
+                        setAiError(null);
+                      }}
+                      className="text-[11px] text-stone-400 hover:text-stone-700 font-bold shrink-0 cursor-pointer border border-sand-300 rounded-lg px-2 py-1.5 bg-white shadow-3xs"
+                    >
+                      ย่อกลับ
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -593,26 +625,34 @@ export default function App() {
                       </div>
                     )}
 
-                    {/* Explanations block */}
-                    <div className="space-y-2">
-                      <div className="bg-[#fcfbf9]/60 px-3.5 py-3 rounded-2xl border border-sand-200">
-                        <h5 className="text-[11.5px] font-bold text-stone-800 mb-1 flex items-center gap-1">
-                          🏕️ ทำไมลานนี้ถึงเหมาะกับทริปนี้:
-                        </h5>
-                        <p className="text-[11.5px] text-stone-600 leading-relaxed font-sans whitespace-pre-line">
-                          {aiRecommendation.reason}
-                        </p>
-                      </div>
+                    {/* Explanations block or Map view depending on view state */}
+                    {aiViewMode === 'text' ? (
+                      <div className="space-y-2">
+                        <div className="bg-[#fcfbf9]/60 px-3.5 py-3 rounded-2xl border border-sand-200">
+                          <h5 className="text-[11.5px] font-bold text-stone-800 mb-1 flex items-center gap-1">
+                            🏕️ ทำไมลานนี้ถึงเหมาะกับทริปนี้:
+                          </h5>
+                          <p className="text-[11.5px] text-stone-600 leading-relaxed font-sans whitespace-pre-line">
+                            {aiRecommendation.reason}
+                          </p>
+                        </div>
 
-                      <div className="bg-sand-55/40 px-3.5 py-3 rounded-2xl border border-sand-200">
-                        <h5 className="text-[11.5px] font-bold text-amber-900 mb-1 flex items-center gap-1">
-                          💡 คำแนะนำสเปเชียลทิป:
-                        </h5>
-                        <p className="text-[11.5px] text-stone-600 leading-relaxed font-sans whitespace-pre-line">
-                          {aiRecommendation.tips}
-                        </p>
+                        <div className="bg-sand-55/40 px-3.5 py-3 rounded-2xl border border-sand-200">
+                          <h5 className="text-[11.5px] font-bold text-amber-900 mb-1 flex items-center gap-1">
+                            💡 คำแนะนำสเปเชียลทิป:
+                          </h5>
+                          <p className="text-[11.5px] text-stone-600 leading-relaxed font-sans whitespace-pre-line">
+                            {aiRecommendation.tips}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      recCamp && (
+                        <div className="space-y-2">
+                          <AiCampMap camp={recCamp} />
+                        </div>
+                      )
+                    )}
 
                     {recCamp && (
                       <div className="grid grid-cols-2 gap-2 pt-1">
