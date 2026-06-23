@@ -1,0 +1,22 @@
+{
+  "name": "CampHub Thailand",
+  "short_name": "CampHub",
+  "description": "แอปคู่คิดสายแค้มป์ปิ้ง ดีไซน์โทนป่าธรรมชาติ Forest Earthy พร้อมระบบแผนที่และค้นหาจุดกางเต็นท์ยอดนิยม",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#112211",
+  "theme_color": "#112211",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=192&auto=format&fit=crop",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=512&auto=format&fit=crop",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

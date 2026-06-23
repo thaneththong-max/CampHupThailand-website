@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "แค้มเปอร์หรือผู้ใช้ที่ลงทะเบียนในระบบ",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "displayName", "role", "createdAt"]
+    },
+    "webboard_topic": {
+      "title": "Webboard Topic",
+      "description": "กระทู้สนทนาแลกเปลี่ยนความคิดเห็นด้านกรรมวิธีการตั้งแคมป์และการเดินทาง",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorPhoto": { "type": "string" },
+        "tag": { "type": "string", "enum": ["ทั่วไป", "รีวิวลานกางเต็นท์", "หาเพื่อนร่วมทริป", "ถาม-ตอบ", "แนะนำอุปกรณ์"] },
+        "createdAt": { "type": "string" },
+        "repliesCount": { "type": "number" },
+        "viewsCount": { "type": "number" }
+      },
+      "required": ["title", "content", "authorId", "authorName", "tag", "createdAt", "repliesCount", "viewsCount"]
+    },
+    "webboard_reply": {
+      "title": "Webboard Reply",
+      "description": "ความคิดเห็นตอบกลับในรายกระทู้สนทนา",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "topicId": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorPhoto": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["topicId", "content", "authorId", "authorName", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "ข้อมูลโปรไฟล์ผู้ใช้และสิทธิ์"
+    },
+    "/webboard_topics/{topicId}": {
+      "schema": "webboard_topic",
+      "description": "รายการกระดานกระทู้สนทนาหลัก"
+    },
+    "/webboard_topics/{topicId}/replies/{replyId}": {
+      "schema": "webboard_reply",
+      "description": "ความคิดเห็นที่ระบุในกระทู้สนทนานั้นๆ"
+    }
+  }
+}

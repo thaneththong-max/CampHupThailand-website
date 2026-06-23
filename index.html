@@ -2,10 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CampHub Thailand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <title>CampHub Thailand - แหล่งข้อมูลกางเต็นท์อัจฉริยะ</title>
+    
+    <!-- Mobile App Web Capabilities -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CampHub" />
+    <meta name="theme-color" content="#1e5128" />
+    
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=192&auto=format&fit=crop" />
   </head>
-  <body>
+  <body class="bg-sand-50 text-stone-900 selection:bg-forest-800 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

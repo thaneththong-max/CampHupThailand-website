@@ -17,11 +17,13 @@ const API_KEY =
   process.env.GOOGLE_MAPS_PLATFORM_KEY ||
   (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
   (globalThis as any).GOOGLE_MAPS_PLATFORM_KEY ||
-  'AIzaSyAyHQbzKb6CXvVaVbQB64veUt-khi7AewQ';
+  '';
 
 const hasValidKey = Boolean(API_KEY) && 
+                    API_KEY.startsWith('AIzaSy') &&
                     API_KEY !== 'YOUR_API_KEY' && 
                     API_KEY !== 'MY_GOOGLE_MAPS_PLATFORM_KEY' && 
+                    API_KEY !== 'AIzaSyAyHQbzKb6CXvVaVbQB64veUt-khi7AewQ' &&
                     API_KEY.trim() !== '';
 
 // Haversine distance calculator helper

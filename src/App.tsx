@@ -20,6 +20,8 @@ import ContactPage from './components/ContactPage';
 import SponsorPage from './components/SponsorPage';
 import AdBanner from './components/AdBanner';
 import AiCampMap from './components/AiCampMap';
+import InstallPrompt from './components/InstallPrompt';
+import Webboard from './components/Webboard';
 import { CAMP_SITES } from './data/camps';
 import { CampSite, CampType, Review } from './types';
 import { auth, signOut, onAuthStateChanged, db } from './lib/firebase';
@@ -321,6 +323,10 @@ export default function App() {
 
   if (currentPath === '/sponsor') {
     return <SponsorPage user={user} onNavigate={handleNavigate} />;
+  }
+
+  if (currentPath === '/webboard') {
+    return <Webboard user={user} onNavigate={handleNavigate} />;
   }
 
   return (
@@ -911,6 +917,9 @@ export default function App() {
       <footer className="mt-16 border-t border-sand-200 text-center py-6 text-xs text-stone-400">
         <p className="font-sans">ศูนย์บริการแคมป์ปิ้ง CampHub Thailand © 2026 • โทนสีป่าออร์แกนิกและทรัพยากรธรรมชาติ</p>
       </footer>
+
+      {/* PWA / Mobile installation trigger */}
+      <InstallPrompt />
     </div>
   );
 }

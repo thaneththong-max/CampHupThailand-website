@@ -51,6 +51,14 @@ export default function Header({
             ค้นหาลานกางเต็นท์
           </button>
           <button 
+            id="nav-webboard-btn"
+            onClick={() => onNavigate('/webboard')} 
+            className="hover:text-amber-300 hover:bg-forest-800/40 px-3 py-2 rounded-xl transition-all flex items-center gap-1"
+          >
+            <span>เว็บบอร์ดท่องเที่ยว</span>
+            <span className="bg-emerald-600 text-white rounded text-[8px] font-extrabold px-1 animate-pulse">NEW</span>
+          </button>
+          <button 
             id="nav-sponsor-btn"
             onClick={() => onNavigate('/sponsor')} 
             className="text-amber-300 hover:text-amber-200 hover:bg-forest-800/40 px-3 py-2 rounded-xl transition-all flex items-center gap-1"
@@ -144,6 +152,7 @@ export default function Header({
       {/* Mobile Sub-Header Navigation bar */}
       <div className="flex lg:hidden items-center justify-around border-t border-forest-800/40 bg-forest-950/25 py-2 px-1 text-[11px] font-bold text-forest-100">
         <button id="mobile-nav-home" onClick={() => onNavigate('/')} className="hover:text-amber-300 transition-colors">ลานกางเต็นท์</button>
+        <button id="mobile-nav-webboard" onClick={() => onNavigate('/webboard')} className="text-emerald-400 hover:text-emerald-300 transition-colors">เว็บบอร์ด</button>
         <button id="mobile-nav-sponsor" onClick={() => onNavigate('/sponsor')} className="text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-0.5">
           <span>ลงโฆษณา</span>
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />

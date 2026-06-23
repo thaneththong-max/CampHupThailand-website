@@ -20,8 +20,10 @@ const API_KEY =
 
 const isDemoOrEmptyKey = 
   !API_KEY || 
+  !API_KEY.startsWith('AIzaSy') ||
   API_KEY === 'YOUR_API_KEY' || 
   API_KEY === 'MY_GOOGLE_MAPS_PLATFORM_KEY' || 
+  API_KEY === 'AIzaSyAyHQbzKb6CXvVaVbQB64veUt-khi7AewQ' ||
   API_KEY.trim() === '';
 
 export default function AiCampMap({ camp }: AiCampMapProps) {

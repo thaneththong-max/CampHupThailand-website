@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Catch-all default read/write block
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      // Allow fallback if user role has 'admin' string
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Collection: Users
+    match /users/{userId} {
+      allow read: if true; // Let users view other camper profiles in Webboard
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && (isOwner(userId) || isAdmin());
+    }
+
+    // Collection: Reviews
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if true; // Fits current default review seeding or camper review submissions
+      allow update, delete: if isAdmin();
+    }
+
+    // Collection: Ads and Banner Configs
+    match /ads/{adId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /configs/{configId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /ad_submissions/{submissionId} {
+      allow read: if isSignedIn() && (resource.data.userUid == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && incoming().userUid == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Collection: Webboard Topics
+    match /webboard_topics/{topicId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().authorId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        (incoming().authorId == existing().authorId && (
+          // Action 1: Author updating original text content
+          (existing().authorId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'tag'])) ||
+          // Action 2: Anyone updating the view/reply statistics counter
+          (incoming().diff(existing()).affectedKeys().hasOnly(['repliesCount', 'viewsCount']))
+        ))
+      );
+      allow delete: if isSignedIn() && (existing().authorId == request.auth.uid || isAdmin());
+    }
+
+    // Sub-collection: Webboard Topic Replies
+    match /webboard_topics/{topicId}/replies/{replyId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().authorId == request.auth.uid && incoming().topicId == topicId;
+      allow update: if isSignedIn() && (existing().authorId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['content'])) || isAdmin();
+      allow delete: if isSignedIn() && (existing().authorId == request.auth.uid || isAdmin());
+    }
+  }
+}
